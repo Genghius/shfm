@@ -1,3 +1,5 @@
+-I have no idea how badly u fucked up this thing by doing what i did...
+
 shfm
 ________________________________________________________________________________
 
@@ -9,7 +11,7 @@ screenshot: https://user-images.githubusercontent.com/6799467/89270554-2b40ab00-
 features
 ________________________________________________________________________________
 
-* no dependencies other than a POSIX shell + POSIX [, printf, dd and stty ***
+* no dependencies other than a POSIX shell + POSIX [, printf, dd, cp, rm and stty ***
 * tiny
 * single file
 * no compilation needed
@@ -28,6 +30,9 @@ j - down
 k - up
 l - open file or directory
 h - go up level
+y - yank file
+p - paste yanked file
+d - delete file
 g - go to top
 G - go to bottom
 q - quit
@@ -56,7 +61,7 @@ ________________________________________________________________________________
 - [x] sanitize filenames for display.
 - [ ] print directories first (hard).
 - [x] fix buggy focus after exit from inline editor.
-- [ ] maybe file operations.
+- [x?] maybe file operations.
 - [x] add / to directories.
 - [x] going up directories should center entry.
 - [x] abstract over sequences.
