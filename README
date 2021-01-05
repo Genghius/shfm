@@ -33,7 +33,6 @@ h - go up level
 y - yank file
 p - paste yanked file
 d - delete file
-t - toggle print directories first
 g - go to top
 G - go to bottom
 q - quit
@@ -60,7 +59,7 @@ todo
 ________________________________________________________________________________
 
 - [x] sanitize filenames for display.
-- [x] print directories first (hard).
+- [] print directories first (hard).
 - [x] fix buggy focus after exit from inline editor.
 - [x?] maybe file operations.
 - [x] add / to directories.
