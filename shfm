@@ -244,14 +244,6 @@ line_format() {
     printf '\r'
 }
 
-populate_dirs_and_files () {
-    dirs=
-    files=
-    for item in $1*; do
-        [ -d $item ] && dirs=$dirs$item/ || files=$files$item/
-    done
-}
-
 main() {
     set -e
 
@@ -274,14 +266,7 @@ main() {
     esc_c=$(printf '\033')
     bs_char=$(printf '\177')
 
-    if [ ${dirs_first:=1} -eq 0 ]; then
-        set -- *
-    else
-        populate_dirs_and_files
-        IFS='/'
-        set -- $dirs $files
-        IFS=
-    fi
+    set -- *
     cur=$1
 
     term_resize
@@ -318,19 +303,6 @@ main() {
                     redraw "$@"
 		fi
 	    ;; #And thus my fuckery ends.
-	    t?) #I figured d was for delete and t was for toggle.
-                [ $dirs_first -eq 0 ] && dirs_first=1 || dirs_first=0
-                if [ $dirs_first -eq 0 ]; then
-                    set -- *
-                else
-                    populate_dirs_and_files
-                    IFS='/'
-                    set -- $dirs $files
-                    IFS=
-                fi
-                y=1 y2=1 cur=$1
-                redraw $@
-            ;;
             k?|A2)
                 term_scroll_up "$@"
             ;;
@@ -341,14 +313,7 @@ main() {
 
             l?|C2|"$esc") # ARROW RIGHT
                 if [ -d "$cur" ] && cd -- "$cur" >/dev/null 2>&1; then
-                    if [ $dirs_first -eq 0 ]; then
-                        set -- *
-                    else
-                        populate_dirs_and_files
-                        IFS='/'
-                        set -- $dirs $files
-                        IFS=
-                    fi
+                    set -- *
                     y=1 y2=1 cur=$1 ltype=
                     redraw "$@"
 
@@ -366,14 +331,7 @@ main() {
                      *) ltype= ;;
                 esac
 
-                if [ $dirs_first -eq 0 ]; then
-                    set -- *
-                else
-                    populate_dirs_and_files
-                    IFS='/'
-                    set -- $dirs $files
-                    IFS=
-                fi
+                set -- *
                 y=1 y2=1 cur=$1 hist=1
                 redraw "$@"
             ;;
@@ -395,27 +353,8 @@ main() {
 
             .?)
                 case ${hidden:=1} in
-                    1)
-                        hidden=0
-                        if [ $dirs_first -eq 0 ]; then
-                            set -- .*
-                        else
-                            populate_dirs_and_files .
-                            IFS='/'
-                            set -- $dirs $files
-                            IFS=
-                        fi
-                    ;;
-                    0)
-                        hidden=1
-                        if [ $dirs_first -eq 0 ]; then
-                            set -- *
-                        else
-                            populate_dirs_and_files
-                            IFS='/'
-                            set -- $dirs $files
-                            IFS=
-                        fi
+                    1) hidden=0; set -- .* ;;
+                    0) hidden=1; set -- *
                 esac
 
                 y=1 y2=1 cur=$1
@@ -433,14 +372,7 @@ main() {
                 esac
 
                 cd -- "${ans:="$0"}" >/dev/null 2>&1|| continue
-                if [ $dirs_first -eq 0 ]; then
-                    set -- *
-                else
-                    populate_dirs_and_files
-                    IFS='/'
-                    set -- $dirs $files
-                    IFS=
-                fi
+                set -- *
                 y=1 y2=1 cur=$1
                 redraw "$@"
             ;;
@@ -450,14 +382,7 @@ main() {
 
                 # word splitting and globbing intentional
                 # shellcheck disable=2086
-                if [ $dirs_first -eq 0 ]; then
-                    set -- $ans*
-                else
-                    populate_dirs_and_files $ans
-                    IFS='/'
-                    set -- $dirs $files
-                    IFS=
-                fi
+                set -- $ans*
 
                 case $1$# in
                     "$ans*1") set -- 'no results'
@@ -470,28 +395,14 @@ main() {
 
             -?)
                 cd -- "$OLDPWD" >/dev/null 2>&1|| continue
-                if [ $dirs_first -eq 0 ]; then
-                    set -- *
-                else
-                    populate_dirs_and_files
-                    IFS='/'
-                    set -- $dirs $files
-                    IFS=
-                fi
+                set -- *
                 y=1 y2=1 cur=$1
                 redraw "$@"
             ;;
 
             \~?)
                 cd || continue
-                if [ $dirs_first -eq 0 ]; then
-                    set -- *
-                else
-                    populate_dirs_and_files
-                    IFS='/'
-                    set -- $dirs $files
-                    IFS=
-                fi
+                set -- *
                 y=1 y2=1 cur=$1
                 redraw "$@"
             ;;
@@ -508,10 +419,9 @@ main() {
                        'k - up' \
                        'l - open file or directory' \
                        'h - go up level' \
+		       'd - delete file' \
 		       'y - yank file' \
 		       'p - paste yanked file' \
-		       'd - delete file' \
-		       't - toggle print directories first' \
                        'g - go to top' \
                        'G - go to bottom' \
                        'q - quit' \
