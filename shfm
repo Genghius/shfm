@@ -280,8 +280,17 @@ main() {
 
     while key=$(dd ibs=1 count=1 2>/dev/null); do
         case $key${esc:=0} in
+	    r?)
+                prompt "Rename $cur to: " r
+		if [ "$ans" ] && [ "$cur" != "$ans" ]; then
+		    mv "$cur" "$ans"
+                    set -- *
+                    y=1 y2=1 cur=$1 hist=1
+                    redraw "$@"
+		fi
+            ;;
             d?) #Here starts my fuckery
-		prompt "Delete $cur [y/N]?" r
+		prompt "Delete $cur [y/N]? " r
 		if [ -z "${ans##Y*}" ] || [ -z "${ans##y*}" ]; then
           	    rm -rf "$cur"
                     set -- *
@@ -295,8 +304,7 @@ main() {
                 status_line "[$cur yanked]"
             ;;
             p?)
-		if [ -n "$yanked" ]; then
-	            #dd if="$yanked" of="$PWD/$name" #is this too autistic?
+		if [ "$yanked" ]; then
 		    cp -rp "$yanked" "$PWD" #is this any good? should i use "-a" instead?
                     set -- *
                     y=1 y2=1 cur=$1 hist=1
@@ -419,6 +427,7 @@ main() {
                        'k - up' \
                        'l - open file or directory' \
                        'h - go up level' \
+		       'r - rename file' \
 		       'd - delete file' \
 		       'y - yank file' \
 		       'p - paste yanked file' \

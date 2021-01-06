@@ -1,9 +1,9 @@
--I have no idea how badly i fucked up this thing by doing what i did...
+-What ever the fucks am I doing?
 
 shfm
 ________________________________________________________________________________
 
-file manager written in posix shell
+file manager written in *"posix"* shell
 
 screenshot: https://user-images.githubusercontent.com/6799467/89270554-2b40ab00-d644-11ea-9f2b-bdabcba61a09.png
 
@@ -11,7 +11,7 @@ screenshot: https://user-images.githubusercontent.com/6799467/89270554-2b40ab00-
 features
 ________________________________________________________________________________
 
-* no dependencies other than a POSIX shell + POSIX [, printf, dd, cp, rm and stty ***
+* no dependencies other than a POSIX shell + POSIX [, printf, dd, cp, rm, mv and stty ***
 * tiny
 * single file
 * no compilation needed
@@ -30,6 +30,7 @@ j - down
 k - up
 l - open file or directory
 h - go up level
+r - rename file
 y - yank file
 p - paste yanked file
 d - delete file
@@ -38,6 +39,7 @@ G - go to bottom
 q - quit
 : - cd to <input>
 / - search current directory <input>*
+
 - - go to last directory
 ~ - go home
 ! - spawn shell
@@ -77,10 +79,10 @@ rather flexible.
 
     # cd to directory on exit
     cd "$(shfm)"
-
+    
     # store pwd in var on exit
     var=$(shfm)
-
+    
     # store pwd in a file on exit
     shfm > file
 
@@ -110,24 +112,24 @@ Example scripts:
     #!/bin/sh -e
     #
     # open file in application based on file extension
-
+    
     case $1 in
         *.mp3|*.flac|*.wav)
             mpv --no-video "$1"
         ;;
-
+    
         *.mp4|*.mkv|*.webm)
             mpv "$1"
         ;;
-
+    
         *.png|*.gif|*.jpg|*.jpe|*.jpeg)
             gimp "$1"
         ;;
-
+    
         *.html|*.pdf)
             firefox "$1"
         ;;
-
+    
         # all other files
         *)
             "${EDITOR:=vi}" "$1"
@@ -138,30 +140,30 @@ Example scripts:
     #!/bin/sh -e
     #
     # open file in application based on mime-type
-
+    
     mime_type=$(file -bi)
-
+    
     case $mime_type in
         audio/*)
            mpv --no-video "$1"
         ;;
-
+    
         video/*)
             mpv "$1"
         ;;
-
+    
         image/*)
             gimp "$1"
         ;;
-
+    
         text/html*|application/pdf*)
             firefox "$1"
         ;;
-
+    
         text/*|)
             "${EDITOR:=vi}" "$1"
         ;;
-
+    
         *)
             printf 'unknown mime-type %s\n' "$mime_type"
         ;;
@@ -273,27 +275,27 @@ ________________________________________________________________________________
           # and can't use local variables without also using a sub-shell). This
           # variable will contain its prior value (if it has one) otherwise.
           tmp=$1 safe=
-
+    
           # loop over string char by char.
           # this takes the approach of infinite loop + inner break condition as
           # we have no access to [ (personal restriction).
           while :; do
               # Remove everything after the first character.
               c=${tmp%"${tmp#?}"*}
-
+    
               # Construct a new string, replacing anything unprintable with '?'.
               case $c in
                   [[:print:]]) safe=$safe$c ;;
                   '')          return ;; # we have nothing more to do, return.
                   *)           safe=$safe\? ;;
               esac
-
+    
               # Remove the first character.
               # This shifts our position forward.
               tmp=${tmp#?}
           done
       }
-
+    
       # Afterwards, the variable 'safe' contains the escaped filename. Using
       # globals here is a must. Printing to the screen and capturing that
       # output is too slow.
