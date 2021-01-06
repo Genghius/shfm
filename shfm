@@ -291,7 +291,7 @@ main() {
             ;;
             d?) #Here starts my fuckery
 		prompt "Delete $cur [y/N]? " r
-		if [ -z "${ans##Y*}" ] || [ -z "${ans##y*}" ]; then
+		if [ -z "${ans##Y*}" ] || [ -z "${ans##y*}" ] && [ "$ans" ]; then
           	    rm -rf "$cur"
                     set -- *
                     y=1 y2=1 cur=$1 hist=1
