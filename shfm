@@ -190,7 +190,7 @@ status_line() {
     printf '%*s\r%s ' "$COLUMNS" "" "($y/$1)"
 
     case $ltype in
-        '') printf %s "$PWD" ;;
+        '') printf %s "$PWD $([ "$ssize" ] && du -0hs "$cur" 2>/dev/null | cut -f1)" ;;
          *) printf %s "$ltype"
     esac
 
@@ -280,6 +280,12 @@ main() {
 
     while key=$(dd ibs=1 count=1 2>/dev/null); do
         case $key${esc:=0} in
+            s?)
+                [ "$ssize" ] && ssize="" || ssize="1"
+                set -- *
+                hist=1
+                redraw "$@"
+            ;;
 	    r?)
                 prompt "Rename $cur to: " r
 		if [ "$ans" ] && [ "$cur" != "$ans" ]; then
@@ -434,6 +440,7 @@ main() {
                        'g - go to top' \
                        'G - go to bottom' \
                        'q - quit' \
+		       's - toggle file size' \
                        ': - cd to <input>' \
                        '/ - search current directory <input>*' \
                        '- - go to last directory' \

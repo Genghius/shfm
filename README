@@ -37,6 +37,7 @@ d - delete file
 g - go to top
 G - go to bottom
 q - quit
+s - toggle file size
 : - cd to <input>
 / - search current directory <input>*
 
