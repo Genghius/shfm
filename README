@@ -31,8 +31,9 @@ k - up
 l - open file or directory
 h - go up level
 r - rename file
+x - cut file
 y - yank file
-p - paste yanked file
+p - paste file
 d - delete file
 g - go to top
 G - go to bottom
