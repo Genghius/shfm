@@ -313,8 +313,8 @@ main() {
                 status_line "[$cur yanked]"
             ;;
             p?)
-		[ "$yanked" ] && cp -rp "$yanked" "$PWD"
-		[ "$cut" ] && mv "$cut" "$PWD"
+		[ "$yanked" ] && cp -rp "$yanked" "$PWD" && yanked=""
+		[ "$cut" ] && mv "$cut" "$PWD" && cut=""
                 set -- *
                 y=1 y2=1 cur=$1 hist=1
                 redraw "$@"
