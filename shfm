@@ -312,7 +312,7 @@ main() {
                 case $cut in
                     *$PWD/$cur*)
                         cut=$(remove "$cut" "$PWD/$cur")
-			status_line "[$cur uncut]"
+                        status_line "[$cur uncut]"
                     ;;
                     *)
                         cut="$cut"" $PWD/$cur"
@@ -332,9 +332,23 @@ main() {
                     ;;
                 esac
             ;;
+            X?)
+                cut=""
+                for i in *
+                    do cut="$cut"" $PWD/$i"
+                done
+                status_line "[cut every file]"
+            ;;
+            Y?)
+                yanked=""
+                for i in *
+                    do yanked="$yanked"" $PWD/$i"
+                done
+                status_line "[yanked every file]"
+            ;;
             p?)
-		[ "$yanked" ] && cp -rp $yanked "$PWD"
-		[ "$cut" ] && mv $cut "$PWD"
+		[ "$yanked" ] && cp -rp $yanked "$PWD" && yanked=""
+		[ "$cut" ] && mv $cut "$PWD" && cut=""
                 set -- *
                 y=1 y2=1 cur=$1 hist=1
                 redraw "$@"
@@ -459,6 +473,8 @@ main() {
 		       'd - delete file' \
 		       'x - cut file' \
 		       'y - yank file' \
+		       'X - cut every file' \
+		       'Y - yank every file' \
 		       'p - paste file' \
                        'g - go to top' \
                        'G - go to bottom' \

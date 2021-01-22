@@ -33,6 +33,8 @@ h - go up level
 r - rename file
 x - cut file
 y - yank file
+X - cut every file
+Y - yank every file
 p - paste file
 d - delete file
 g - go to top
