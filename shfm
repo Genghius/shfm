@@ -173,6 +173,10 @@ list_print() {
     esc CUP "$((y > y2 ? y2 : y))"
 }
 
+remove() {
+    printf '%s%s\n' "${1%$2*}" "${1#*$2}"
+}
+
 redraw() {
     list_print "$@"
     status_line "$#"
@@ -305,16 +309,32 @@ main() {
 		fi
             ;;
             x?)
-                cut="$PWD/$cur"
-                status_line "[$cur cut]"
+                case $cut in
+                    *$PWD/$cur*)
+                        cut=$(remove "$cut" "$PWD/$cur")
+			status_line "[$cur uncut]"
+                    ;;
+                    *)
+                        cut="$cut"" $PWD/$cur"
+                        status_line "[$cur cut]"
+                    ;;
+                esac
             ;;
             y?)
-                yanked="$PWD/$cur"
-                status_line "[$cur yanked]"
+                case $yanked in
+                    *$PWD/$cur*)
+                        yanked=$(remove "$yanked" "$PWD/$cur")
+                        status_line "[$cur unyanked]"
+                    ;;
+                    *)
+                        yanked="$yanked"" $PWD/$cur"
+                        status_line "[$cur yanked]"
+                    ;;
+                esac
             ;;
             p?)
-		[ "$yanked" ] && cp -rp "$yanked" "$PWD" && yanked=""
-		[ "$cut" ] && mv "$cut" "$PWD" && cut=""
+		[ "$yanked" ] && cp -rp $yanked "$PWD"
+		[ "$cut" ] && mv $cut "$PWD"
                 set -- *
                 y=1 y2=1 cur=$1 hist=1
                 redraw "$@"
